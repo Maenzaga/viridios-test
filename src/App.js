@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import data from "./data.json";
+import "./App.css";
+import Multiselect from "multiselect-react-dropdown";
+import { CountryCard } from "./components/CountryCard/CountryCard";
+import { useEffect, useState } from "react";
 
 function App() {
+  const countryInfo = data["SDR2020 Data"].map((country) => country);
+  const optionsInfo = countryInfo.map((country) => country["Country"]);
+  const [render, setRender] = useState([]);
+  const renderedCountry = countryInfo.filter((country) => {
+    for (let i = 0; i == render.length; i++) {
+      return country["Country"] === render[i] ? country : "";
+    }
+  });
+  const renderCard = () => {
+    return (
+      <>
+        {renderedCountry.map((country) => {
+          return <CountryCard key={country.id} countryInfo={country} />;
+        })}
+      </>
+    );
+  };
+  useEffect(() => {}, [render]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Multiselect
+        isObject={false}
+        onKeyPressFn={function noRefCheck() {}}
+        onRemove={(event) => {
+          console.log("REMOVE", event);
+        }}
+        onSearch={(event) => {
+          console.log("SEARCH", event);
+        }}
+        onSelect={(event) => {
+          setRender(event);
+          console.log("SELECT", event, render);
+        }}
+        options={optionsInfo}
+      />
+      <div>{renderCard()}</div>
     </div>
   );
 }
